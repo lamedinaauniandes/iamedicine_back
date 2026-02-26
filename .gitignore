@@ -1,0 +1,116 @@
+# -------------------------
+# Python / FastAPI
+# -------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*/__pycache__/*
+
+# Bytecode / caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pyre/
+.pytype/
+.cache/
+
+# -------------------------
+# Virtual environments
+# -------------------------
+.venv/
+venv/
+env/
+ENV/
+.conda/
+pip-wheel-metadata/
+
+# -------------------------
+# Environment variables / secrets
+# -------------------------
+.env
+.env.*
+!.env.example
+
+# -------------------------
+# Logs
+# -------------------------
+*.log
+logs/
+log/
+
+# -------------------------
+# Uvicorn / Gunicorn / runtime
+# -------------------------
+*.pid
+*.sock
+gunicorn.conf.pyc
+
+# If you use a local sqlite DB
+*.sqlite3
+*.db
+
+# -------------------------
+# Packaging / builds
+# -------------------------
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-log.txt
+
+# -------------------------
+# Coverage / reports
+# -------------------------
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+*.py,cover
+
+# -------------------------
+# IDEs / editors
+# -------------------------
+.vscode/
+.idea/
+*.iml
+*.swp
+*.swo
+
+# -------------------------
+# OS files
+# -------------------------
+.DS_Store
+Thumbs.db
+
+# -------------------------
+# Jupyter
+# -------------------------
+.ipynb_checkpoints/
+
+# -------------------------
+# FastAPI docs outputs (si generas)
+# -------------------------
+docs/_build/
+site/
+
+# -------------------------
+# Alembic (si lo usas)
+# -------------------------
+# Keep migrations tracked, ignore only local artifacts if any:
+alembic.ini.bak
+
+# -------------------------
+# Docker / local overrides (opcional)
+# -------------------------
+docker-compose.override.yml
+
+# -------------------------
+# MIGRATIONS
+# -------------------------
+*migrations/
+*migrations/*
+
+
+################### 
+alembic.ini
