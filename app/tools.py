@@ -15,13 +15,6 @@ from dotenv import load_dotenv
 
 load_dotenv(override=True)
 
-print(
-    os.getenv("MODEL_EMBEDDINGS"),
-    os.getenv("INDEX_NAME"),
-    os.getenv("DIMENSION_EMBEDDINGS")
-)
-
-
 classifier_model = ChatOpenAI(model="gpt-5-mini")
 basic_model = ChatOpenAI(model="gpt-5-mini")
 advanced_model = ChatOpenAI(model="gpt-5.2")
