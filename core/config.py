@@ -21,6 +21,12 @@ class Settings_database:
     DATABASE_URL = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVER}:{POSTGRES_PORT}/{POSTGRESS_DB}?{POSTGRES_SSLMODE}"
     # DATABASE_URL = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVER}:{POSTGRES_PORT}/{POSTGRESS_DB}"
 
+class Settings_hashing: 
+    HASH_SECRET_KEY: str = os.getenv("HASH_SECRET_KEY")
+    HASH_ALGORITHM: str = os.getenv("HASH_ALGORITHM")
+
+
 settings = Settings_database()
+settings_hash = Settings_hashing()
 
 

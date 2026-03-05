@@ -12,6 +12,7 @@ router = APIRouter()
 
 @router.post("/",status_code=status.HTTP_201_CREATED)
 def crear_usuario(user:User,db:Session = Depends(get_db),current_user:User=Depends(get_current_user)): 
+    print("creando usuario 1")
     usuario = Usuario(db)
     res = usuario.crear(user)
     return res

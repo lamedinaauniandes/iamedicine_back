@@ -31,6 +31,7 @@ class Usuario:
             self.db.commit()
             self.db.refresh(nuevo_usuario)
         except Exception as e: 
+            print(e)
             raise HTTPException(
                 detail=f" {e}",
                 status_code=status.HTTP_409_CONFLICT
