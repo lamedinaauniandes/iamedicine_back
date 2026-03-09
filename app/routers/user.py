@@ -7,7 +7,7 @@ from typing import List
 from ..repository.user import Usuario 
 from app.oauth import get_current_user
 
-router = APIRouter()
+router = APIRouter(prefix="/users",tags=["User"])
  
 
 @router.post("/",status_code=status.HTTP_201_CREATED)

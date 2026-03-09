@@ -1,0 +1,6 @@
+TRADUCE_QUERY_NODE = "traduce_query_node"
+CLASSIFY_LEVEL_NODE = "classify_level_node"
+ASSIGN_LLM_NODE = "assing_llm_node"
+REASONING_NODE = "reasoning_node"
+RAG_NODE = "rag_node"
+TRADUCE_ORIGINALLANGUAGE_NODE = "traduce_original_language"

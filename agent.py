@@ -40,7 +40,5 @@ res = agent.invoke({
 })
 
 
-
-
 print(res)
 print(res["messages"][-1].content)
