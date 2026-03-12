@@ -61,13 +61,19 @@ def reasoning_node(state:MessageGraph):
 
 def traduce_original_language(state:MessageGraph):
     print("-"*50,"traduce_original_language") 
-    if state["init_language"].lower().replace(" ","") != "english": 
+    # print(state)
+    if state["init_language"].lower().replace(" ","") != "english":
+        print("traducing to english ...") 
         traduce_motor = back_original_language_chain(state["llm"])
+        print("debug 2.0")
         re = traduce_motor.invoke({
             "language": state["init_language"],
             "answer": state["english_messages"][-1].content
         })
+        print("debug 2.1")
         return {"messages":re}    
+    print("-"*50)
+    print(re)
     return {"messages":state["english_messages"][-1]}
 
 

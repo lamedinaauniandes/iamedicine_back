@@ -46,14 +46,10 @@ state_machine.add_conditional_edges(
 state_machine.add_edge(RAG_NODE,REASONING_NODE)
 state_machine.add_edge(TRADUCE_ORIGINALLANGUAGE_NODE,END)
 
-
-# agent = state_machine.compile()
-
-
-
 if __name__=="__main__":
     print("testing...")
     from langchain_core.messages import HumanMessage 
+    agent = state_machine.compile()
     response = agent.invoke({
         "messages":HumanMessage(content="¿Que es la actividad de la enfermedad en la artritis reumatoide?")
     })
