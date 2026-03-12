@@ -24,6 +24,13 @@ class Settings_database:
 class Settings_hashing: 
     HASH_SECRET_KEY: str = os.getenv("HASH_SECRET_KEY")
     HASH_ALGORITHM: str = os.getenv("HASH_ALGORITHM")
+    
+
+class Settings_urls: 
+    LOCAL_PORT3000:str = os.getenv("LOCAL_PORT3000")
+    LOCAL2_PORT3000:str = os.getenv("LOCAL2_PORT3000")
+    IP_SERVER_PORT:str = os.getenv("IP_SERVER_PORT")
+    IP_SERVER:str = os.getenv("IP_SERVER")
 
 
 settings = Settings_database()

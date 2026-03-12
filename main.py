@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from app.routers import user,chat,auth
 from app.db.database import BASE,engine
-
+from core.config import Settings_urls
 
 def create_tables():
     BASE.metadata.create_all(bind=engine)
@@ -34,11 +34,10 @@ app.include_router(auth.router)
 
 def get_allowed_origins() -> List[str]:
     return [
-        "http://127.0.0.1:3000", 
-        "http://localhost:3000",
-        "http://52.202.191.134:3000",
-        "http://52.202.191.134",
-        "http://186.155.114.216:3000",
+        Settings_urls.LOCAL_PORT3000,
+        Settings_urls.LOCAL2_PORT3000,
+        Settings_urls.IP_SERVER_PORT,
+        Settings_urls.IP_SERVER,
         ]
 
 app.add_middleware(
