@@ -35,5 +35,6 @@ class Settings_urls:
 
 settings = Settings_database()
 settings_hash = Settings_hashing()
+settings_urls = Settings_urls()
 
 
