@@ -11,6 +11,7 @@ from app_agent.utils.chains.chains import (
     traduce_to_english_chain,
     back_original_language_chain,
 )
+from app_agent.utils.chains.templates import clasification_user
 from app_agent.utils.tools.tool_rag import retrieve_context
 
 basic_llm = ChatOpenAI(model="gpt-5-mini")   ### models would be in config
@@ -21,32 +22,35 @@ tools = [retrieve_context]
 class MessageGraph(TypedDict): 
     messages: Annotated[list[BaseMessage],add_messages]
     english_messages: Annotated[list[BaseMessage],add_messages]
-    init_language: str 
-    level:str 
+    init_language:str
+    level: str
     llm: BaseChatModel
+    query: str
+    english_query: str
 
 
 def traduce_query_node(state:MessageGraph):
     print("-"*50,"traduce_query_node") 
     response = traduce_to_english_chain.invoke({
-        "query": state["messages"][-1]
+        "query": state["messages"][0]
     })
     return {
-        "init_language":response[-1].init_language, 
-        "english_message":response[-1].english_query
+        "init_language":response[-1].init_language,
+        "english_messages":response[-1].english_query,
+        "english_query":response[-1].english_query,
         }
 
 def classify_level_node(state:MessageGraph):
     print("-"*50,"classify_level_node")
     response = classify_level_chain.invoke({ 
-        "query": state["messages"][-1]
+        "query": state["english_query"]
     })
     return {"level":response.content}
 
 
 def assign_llm_node(state:MessageGraph):
     print("-"*50,"assign_llm_node")
-    if state["level"] == "student": 
+    if state["level"].replace(" ","").upper() == "STUDENT": 
         return {"llm":basic_llm.bind_tools(tools)}
     return {"llm":advanced_llm.bind_tools(tools)}
 
@@ -55,25 +59,21 @@ def reasoning_node(state:MessageGraph):
     print("-"*50,"reasoning_node") 
     reasoning_motor = reasoning_chain(state["llm"])
     response = reasoning_motor.invoke({
-        "messages":state["english_messages"]
+        "level": clasification_user[state["level"]],
+        "messages":state["english_messages"],
+        "query": state["english_query"]
     })
     return {"english_messages":[response]}
 
 def traduce_original_language(state:MessageGraph):
     print("-"*50,"traduce_original_language") 
-    # print(state)
     if state["init_language"].lower().replace(" ","") != "english":
-        print("traducing to english ...") 
         traduce_motor = back_original_language_chain(state["llm"])
-        print("debug 2.0")
         re = traduce_motor.invoke({
             "language": state["init_language"],
             "answer": state["english_messages"][-1].content
         })
-        print("debug 2.1")
         return {"messages":re}    
-    print("-"*50)
-    print(re)
     return {"messages":state["english_messages"][-1]}
 
 

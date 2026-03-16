@@ -14,8 +14,6 @@ def auth_user(usuario:Login,db:Session):
             status_code=status.HTTP_404_NOT_FOUND, 
             detail=f"no se encuentra User"
         )
-    
-    print ("debug2: ",user.password)
     if not Hash.verify_password(user.password, usuario.password ):
         print("entramos a la excepción del logeo, no coincide el password")
         raise HTTPException(

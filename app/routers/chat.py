@@ -30,14 +30,10 @@ async def chat(req:ChatRequest,db:Session = Depends(get_db),current_user:User=De
     print("chat ...")
     if agent is None: 
         raise HTTPException(status_code=400,detail="Agent not initialized")
-    print("debug 1")
     message_user = req.message.strip()
-    print("debug 2")
     if not message_user:
         raise HTTPException(status_code=400,detail="empty message")
-    print("debug 3")
     try:
-        print("debug 4","\n", message_user)
         res = await run_in_threadpool(
             agent.invoke,
             {
@@ -45,16 +41,11 @@ async def chat(req:ChatRequest,db:Session = Depends(get_db),current_user:User=De
             }
         )
 
-        print("debug 5 ")
         msgs = res.get("messages",[])
 
         if not msgs:
-            print("debug 6")
             raise RuntimeError("Agent returned no messages")
-        print("debug 7")
         answer = getattr(msgs[-1],"content",None) or str(msgs[-1])
-        print("debug 7.1")
-        print(answer)
         return ChatResponse(reply=answer)
 
     except Exception as e:
