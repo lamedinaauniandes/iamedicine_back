@@ -33,9 +33,12 @@ def retrieve_context(query:str):
     retrieve_docs = vectorstore.as_retriever().invoke(query,k=RETRIEVE_DOCS)
 
     serialized = "\n\n".join(
-        (f"source {doc.metadata.get("source","unknow")} \n\n {doc.page_content}")
+        (f"source {doc.metadata.get("source","unknow")} \n\n {doc.page_content} \n\n cite vancouver: {doc.metadata.get("vancouver_cite","Unknow")}")
         for doc in retrieve_docs
     )
+    print("/"*100)
+    print(serialized)
+    print("/"*100)
 
     return serialized, retrieve_docs 
 

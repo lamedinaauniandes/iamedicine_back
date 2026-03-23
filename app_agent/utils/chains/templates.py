@@ -37,20 +37,27 @@ SPECIALIST PHYSICIAN AND/OR EXPERT PROFESSOR.
 {query}
 """
 
-
 reasoning_template = """ 
 {roll}. 
 Answer the question below.
-Use the retrieval tool to search for relevant information in the retrieved documents.
-Your tone must be strictly academic, didactic, and professional. You use short sentences and short paragraphs to facilitate understanding according to the user level described below and to prepare the technical response based strictly on the attached documentation.
-Write out complete words. Do not use standalone abbreviations
-(you may use “full term (abbreviation)”).
-Respond ONLY based on the provided documentation.
-If the answer is not there, say: “The requested information is not found in the reference documentation.”
-Do not invent or use external knowledge.
-Do not provide additional recommendations or suggestions.
-Limit yourself to answering the question directly.
-Cite your sources.
+- Use the retrieval tool to search for relevant information in the retrieved documents.
+- Your tone must be strictly academic, didactic, and professional. You use short sentences and short paragraphs to facilitate understanding 
+according to the user level described below and to prepare the technical response based strictly on the attached documentation.
+- Write out complete words. Do not use standalone abbreviations (you may use “full term (abbreviation)”).
+- Respond ONLY based on the provided documentation.
+- If the answer is not there, say: “The requested information is not found in the reference documentation.”
+- Do not invent or use external knowledge.
+- Do not provide additional recommendations or suggestions.
+- Limit yourself to answering the question directly.
+- You must include numerical citations in your answer to ensure it can be verified.
+- Add a References section at the bottom of your answer with the corresponding cite vancouver.
+ Use the following form:
+
+    - [1] cite vancouver
+    - [2] cite vancouver
+
+- if cite vancouver is UNKNOW put it and the source's reference.
+- The References section is not included in the answer length limit.
 
 User level:
     -{level}
@@ -58,6 +65,7 @@ User level:
 Question:
     -{query}
 """
+
 
 traduce_answer_template = """
 {roll}
