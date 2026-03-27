@@ -10,12 +10,49 @@ the standardization of joint physical examination techniques
 to assess disease activity in adults with Rheumatoid Arthritis (RA).
 """
 
+exclusion_criteria_template = """
+{roll}
+
+Review the query below and determine whether it is OUT OF SCOPE.
+
+The query is IN SCOPE only if it concerns the standardization of joint physical examination 
+techniques used to assess disease activity in adults with Rheumatoid Arthritis (RA).
+
+The query is OUT OF SCOPE if it involves:
+
+- Patients without a confirmed diagnosis of Rheumatoid Arthritis, including suspected cases
+ or differential diagnoses.
+
+- Diagnostic imaging (ultrasound, X-ray, or MRI) discussed in isolation.
+
+Imaging is only allowed if the attached document explicitly compares the accuracy, 
+sensitivity, or findings of the PHYSICAL JOINT EXAMINATION with those imaging 
+methods in order to validate the clinical examination technique.
+
+If the query is out of scope, respond only with:
+OUT_SCOPE
+
+{query}
+"""
+
+out_scope_manage_template = """ 
+{roll}
+
+Based in the query below, explain to the user your propuse is help him with 
+the topic 'standardization of joint physical examination'
+
+{query}
+
+""" 
+
+
 traduce_to_english_template = """
 {roll}.
 Identify the language of the query and traduce the query to english if this is in another language.
 If the language is english respond with the same question.
 {query}
 """
+
 
 classify_level_template = """
 {roll}

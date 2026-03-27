@@ -7,12 +7,25 @@ from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode
 from app_agent.utils.chains.chains import (
     reasoning_chain,
+    exclusion_criteria_chain,
+    out_scope_manage_chain,
     classify_level_chain,
     traduce_to_english_chain,
     back_original_language_chain,
 )
 from app_agent.utils.chains.templates import clasification_user
 from app_agent.utils.tools.tool_rag import retrieve_context
+from langgraph.graph import StateGraph,START,END
+from app_agent.utils.nodes.node_names import (
+    OUT_SCOPE_MANAGE_NODE,
+    TRADUCE_QUERY_NODE,
+    CLASSIFY_LEVEL_NODE,
+    ASSIGN_LLM_NODE,
+    REASONING_NODE,
+    RAG_NODE,
+    TRADUCE_ORIGINALLANGUAGE_NODE,
+)
+from langgraph.graph import StateGraph,START,END
 
 basic_llm = ChatOpenAI(model="gpt-5-mini")   ### models would be in config
 advanced_llm = ChatOpenAI(model="gpt-5.2")
@@ -27,6 +40,28 @@ class MessageGraph(TypedDict):
     llm: BaseChatModel
     query: str
     english_query: str
+    scope: str
+
+def exclusion_criteria_node(state:MessageGraph): 
+    print("-"*50,"exclusion_criteria_node")
+    response = exclusion_criteria_chain.invoke({
+        "query":state["messages"][0]
+    }) 
+    print("#"*20,f"response: {response.content}")
+    return {"scope":response.content}
+
+def exclusion_criteria_edge(state:MessageGraph): 
+    print("-"*50,"exclusion_criteria_edge")
+    if state["scope"].upper().replace(" ","") == "OUT_SCOPE":
+        return OUT_SCOPE_MANAGE_NODE
+    return TRADUCE_QUERY_NODE
+
+def out_scope_manage_node(state:MessageGraph): 
+    print("-"*50,"out_scope_manage_node")
+    response = out_scope_manage_chain.invoke({
+        "query":state["messages"][0]
+    })
+    return {"messages":response.content}
 
 
 def traduce_query_node(state:MessageGraph):
@@ -64,6 +99,11 @@ def reasoning_node(state:MessageGraph):
         "query": state["english_query"]
     })
     return {"english_messages":[response]}
+
+def should_investigate_edge(state:MessageGraph) -> str: 
+    if state["english_messages"][-1].tool_calls: 
+        return RAG_NODE
+    return TRADUCE_ORIGINALLANGUAGE_NODE
 
 def traduce_original_language(state:MessageGraph):
     print("-"*50,"traduce_original_language") 

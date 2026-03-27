@@ -1,3 +1,5 @@
+EXCLUSION_CRITERIA_NODE = "exclusion_criteria_node"
+OUT_SCOPE_MANAGE_NODE = "out_scope_manage_node"
 TRADUCE_QUERY_NODE = "traduce_query_node"
 CLASSIFY_LEVEL_NODE = "classify_level_node"
 ASSIGN_LLM_NODE = "assing_llm_node"

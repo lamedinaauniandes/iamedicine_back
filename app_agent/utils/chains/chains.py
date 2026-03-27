@@ -6,6 +6,8 @@ from langchain_core.prompts import ChatPromptTemplate,MessagesPlaceholder
 from langchain_core.runnables import Runnable
 from app_agent.utils.chains.templates import (
     roll_template,
+    exclusion_criteria_template,
+    out_scope_manage_template,
     classify_level_template,
     traduce_to_english_template,
     reasoning_template,
@@ -18,6 +20,20 @@ load_dotenv()
 
 basic_llm = ChatOpenAI(model="gpt-5-mini")
 advanced_llm = ChatOpenAI(model="gpt-5.2")
+
+########## CHAIN 0: EXCLUSION CRITERIA
+exclusion_criteria_prompt = ChatPromptTemplate.from_messages(
+    [("system",exclusion_criteria_template)],
+).partial(roll=roll_template)
+
+exclusion_criteria_chain =  exclusion_criteria_prompt | advanced_llm 
+######### CHAIN 0.1 OUT SCOPE MANAGE
+
+out_scope_manage_prompt = ChatPromptTemplate.from_messages(
+    [("system",out_scope_manage_template)]
+).partial(roll=roll_template)
+
+out_scope_manage_chain = out_scope_manage_prompt | basic_llm
 
 ########## CHAIN 1: TRADUCE QUERY
 
