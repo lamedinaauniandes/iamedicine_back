@@ -15,8 +15,10 @@ exclusion_criteria_template = """
 
 Review the query below and determine whether it is OUT OF SCOPE.
 
-The query is IN SCOPE only if it concerns the standardization of joint physical examination 
+- The query is IN SCOPE only if it concerns the standardization of joint physical examination 
 techniques used to assess disease activity in adults with Rheumatoid Arthritis (RA).
+
+- If the query is related with Rheumatoid Arthritis (RA) it is considered IN SCOPE.
 
 The query is OUT OF SCOPE if it involves:
 
@@ -35,21 +37,26 @@ OUT_SCOPE
 {query}
 """
 
-out_scope_manage_template = """ 
+out_scope_manage_template = """
 {roll}
 
-Based in the query below, explain to the user your propuse is help him with 
-the topic 'standardization of joint physical examination'
+Based on the query below, explain to the user that your purpose is to help them with the topic of "standardization of joint physical examination."
+
+- Do not provide suggestions.
 
 {query}
-
-""" 
+"""
 
 
 traduce_to_english_template = """
 {roll}.
-Identify the language of the query and traduce the query to english if this is in another language.
-If the language is english respond with the same question.
+Based on the query below: 
+- Identify the language of the query 
+- Traduce the query to english if this is in another language.
+- If the language is english respond with the same question.
+- Traduce the query to spanish if this in another language. 
+- If the language is spanish respond with the same question.
+
 {query}
 """
 
@@ -74,33 +81,58 @@ SPECIALIST PHYSICIAN AND/OR EXPERT PROFESSOR.
 {query}
 """
 
-reasoning_template = """ 
-{roll}. 
-Answer the question below.
-- Use the retrieval tool to search for relevant information in the retrieved documents.
-- Your tone must be strictly academic, didactic, and professional. You use short sentences and short paragraphs to facilitate understanding 
-according to the user level described below and to prepare the technical response based strictly on the attached documentation.
-- Write out complete words. Do not use standalone abbreviations (you may use “full term (abbreviation)”).
-- Respond ONLY based on the provided documentation.
-- If the answer is not there, say: “The requested information is not found in the reference documentation.”
-- Do not invent or use external knowledge.
-- Do not provide additional recommendations or suggestions.
-- Limit yourself to answering the question directly.
-- You must include numerical citations in your answer to ensure it can be verified.
-- Add a References section at the bottom of your answer with the corresponding cite vancouver.
- Use the following form:
+reasoning_template = """
+{roll}
 
-    - [1] cite vancouver
-    - [2] cite vancouver
+You must answer the user's question using only the provided documentation.
 
-- if cite vancouver is UNKNOW put it and the source's reference.
+Retrieval guidance:
+- Use the English question to retrieve relevant information from the provided documents using the retrieval tool.
+- Use the Spanish question to retrieve relevant information from the provided documents using the retrieval tool.
+- Always search for relevant information in both English and Spanish.
+
+Answering rules:
+- Base your answer strictly on the provided documentation.
+- Do not use external knowledge.
+- Do not invent, infer, or assume information that is not explicitly supported by the documents.
+- If the answer is not found in the documentation, respond exactly with:
+  "The requested information is not found in the reference documentation."
+- Answer the question directly.
+- It is not necessary to include all the documentation. Include only the relevant information.
+- Do not include recommendations, suggestions, or extra commentary.
+
+Style rules:
+- Use a strictly academic, didactic, and professional tone.
+- Use short sentences and short paragraphs.
+- Adapt the explanation to the user level provided below.
+- Write complete words.
+- Do not use standalone abbreviations.
+- When needed, introduce terms as full term (abbreviation).
+
+Citation rules:
+- Include numerical citations in the answer.
+- Add a "References" section at the end.
+- The References section must contain the corresponding Vancouver-style citations in the following format:
+
+  [1] Vancouver citation
+  [2] Vancouver citation
+
+- If a Vancouver citation is unknown, write:
+  [n] UNKNOWN - source reference
+
 - The References section is not included in the answer length limit.
 
 User level:
-    -{level}
+{level}
 
 Question:
-    -{query}
+{query}
+
+English question:
+{query}
+
+Spanish question:
+{spanish_query}
 """
 
 

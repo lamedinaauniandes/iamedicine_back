@@ -40,6 +40,7 @@ class MessageGraph(TypedDict):
     llm: BaseChatModel
     query: str
     english_query: str
+    spanish_query: str
     scope: str
 
 def exclusion_criteria_node(state:MessageGraph): 
@@ -47,7 +48,6 @@ def exclusion_criteria_node(state:MessageGraph):
     response = exclusion_criteria_chain.invoke({
         "query":state["messages"][0]
     }) 
-    print("#"*20,f"response: {response.content}")
     return {"scope":response.content}
 
 def exclusion_criteria_edge(state:MessageGraph): 
@@ -63,7 +63,6 @@ def out_scope_manage_node(state:MessageGraph):
     })
     return {"messages":response.content}
 
-
 def traduce_query_node(state:MessageGraph):
     print("-"*50,"traduce_query_node") 
     response = traduce_to_english_chain.invoke({
@@ -73,6 +72,7 @@ def traduce_query_node(state:MessageGraph):
         "init_language":response[-1].init_language,
         "english_messages":response[-1].english_query,
         "english_query":response[-1].english_query,
+        "spanish_query":response[-1].spanish_query
         }
 
 def classify_level_node(state:MessageGraph):
@@ -96,7 +96,8 @@ def reasoning_node(state:MessageGraph):
     response = reasoning_motor.invoke({
         "level": clasification_user[state["level"]],
         "messages":state["english_messages"],
-        "query": state["english_query"]
+        "query": state["english_query"],
+        "spanish_query":state["spanish_query"],
     })
     return {"english_messages":[response]}
 

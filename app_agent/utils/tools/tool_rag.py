@@ -26,15 +26,13 @@ vectorstore = PineconeVectorStore(
 @tool(response_format="content_and_artifact")
 def retrieve_context(query:str): 
     """Retrieve relevant documentation to help answer queries about standarized examination in arthritis reumathoid"""
+    print("*"*20,"retrieve tool\n",query)
     retrieve_docs = vectorstore.as_retriever().invoke(query,k=RETRIEVE_DOCS)
 
     serialized = "\n\n".join(
         (f"source {doc.metadata.get("source","unknow")} \n\n {doc.page_content} \n\n cite vancouver: {doc.metadata.get("vancouver_cite","Unknow")}")
         for doc in retrieve_docs
     )
-    print("/"*100)
-    print(serialized)
-    print("/"*100)
 
     return serialized, retrieve_docs 
 

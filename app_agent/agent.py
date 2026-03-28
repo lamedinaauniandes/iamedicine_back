@@ -26,7 +26,6 @@ state_machine.add_node(REASONING_NODE,reasoning_node)
 state_machine.add_node(RAG_NODE,tool_node)
 state_machine.add_node(TRADUCE_ORIGINALLANGUAGE_NODE,traduce_original_language)
 
-
 state_machine.add_edge(START,EXCLUSION_CRITERIA_NODE)
 state_machine.add_conditional_edges(
     EXCLUSION_CRITERIA_NODE,
