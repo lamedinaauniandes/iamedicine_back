@@ -12,13 +12,13 @@ from app.routers import user,chat,auth
 from app.db.database import BASE,engine
 from core.config import settings_urls
 
-def create_tables():
-    BASE.metadata.create_all(bind=engine)
+# def create_tables():
+#     BASE.metadata.create_all(bind=engine)
 
-try:    
-    create_tables()
-except Exception as e: 
-    print(e)
+# try:    
+#     create_tables()
+# except Exception as e: 
+#     print(e)
 
 
 load_dotenv(override=True)

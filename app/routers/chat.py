@@ -37,7 +37,8 @@ async def chat(req:ChatRequest,db:Session = Depends(get_db),current_user:User=De
         res = await run_in_threadpool(
             agent.invoke,
             {
-                "messages": [HumanMessage(content=message_user)]
+                "messages": [HumanMessage(content=message_user)],
+                "retry":0
             }
         )
 

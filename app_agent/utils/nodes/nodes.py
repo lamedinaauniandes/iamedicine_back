@@ -18,6 +18,7 @@ from app_agent.utils.tools.tool_rag import retrieve_context
 from langgraph.graph import StateGraph,START,END
 from app_agent.utils.nodes.node_names import (
     OUT_SCOPE_MANAGE_NODE,
+    EXCLUSION_CRITERIA_NODE,
     TRADUCE_QUERY_NODE,
     CLASSIFY_LEVEL_NODE,
     ASSIGN_LLM_NODE,
@@ -31,6 +32,8 @@ basic_llm = ChatOpenAI(model="gpt-5-mini")   ### models would be in config
 advanced_llm = ChatOpenAI(model="gpt-5.2")
 tools = [retrieve_context]
 
+RETRIES_MAX = 2    #### maximum retries for each node
+
 #### state object
 class MessageGraph(TypedDict): 
     messages: Annotated[list[BaseMessage],add_messages]
@@ -42,18 +45,28 @@ class MessageGraph(TypedDict):
     english_query: str
     spanish_query: str
     scope: str
+    retry: int = 0
 
 def exclusion_criteria_node(state:MessageGraph): 
     print("-"*50,"exclusion_criteria_node")
     response = exclusion_criteria_chain.invoke({
         "query":state["messages"][0]
     }) 
-    return {"scope":response.content}
+    return {"scope":response.content,"retry":state["retry"] + 1 }
 
 def exclusion_criteria_edge(state:MessageGraph): 
     print("-"*50,"exclusion_criteria_edge")
-    if state["scope"].upper().replace(" ","") == "OUT_SCOPE":
+
+    scope = state["scope"].upper().replace(" ","")
+    retry = state["retry"]
+
+    print("#"*10,f"scope: {state['scope']}")
+  
+    if scope == "OUT_SCOPE" and retry>RETRIES_MAX:
         return OUT_SCOPE_MANAGE_NODE
+    elif scope == "OUT_SCOPE" and retry<=RETRIES_MAX:
+        return EXCLUSION_CRITERIA_NODE
+
     return TRADUCE_QUERY_NODE
 
 def out_scope_manage_node(state:MessageGraph): 

@@ -30,7 +30,7 @@ state_machine.add_edge(START,EXCLUSION_CRITERIA_NODE)
 state_machine.add_conditional_edges(
     EXCLUSION_CRITERIA_NODE,
     exclusion_criteria_edge,
-    [TRADUCE_QUERY_NODE,OUT_SCOPE_MANAGE_NODE]
+    [TRADUCE_QUERY_NODE,OUT_SCOPE_MANAGE_NODE,EXCLUSION_CRITERIA_NODE]
 )
 state_machine.add_edge(OUT_SCOPE_MANAGE_NODE,END)
 state_machine.add_edge(TRADUCE_QUERY_NODE,CLASSIFY_LEVEL_NODE)
