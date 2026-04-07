@@ -5,7 +5,7 @@ from core.config import settings_hash
 
 SECRET_KEY =  settings_hash.HASH_SECRET_KEY
 ALGORITHM = settings_hash.HASH_ALGORITHM
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 4320
 
 def create_access_token(data:dict): 
     to_encode = data.copy()
@@ -22,5 +22,6 @@ def verify_token(token:str,credentials_exception):
         if username is None: 
             raise credentials_exception
         token_data = TokenData(username=username)
+        return token_data
     except JWTError:
         raise credentials_exception

@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 from typing import TypedDict,Annotated
 from langchain_openai import ChatOpenAI
-from langchain_core.messages import BaseMessage
+from langchain_core.messages import BaseMessage,ToolMessage
 from langchain_core.language_models.chat_models import BaseChatModel
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode
@@ -49,8 +49,10 @@ class MessageGraph(TypedDict):
 
 def exclusion_criteria_node(state:MessageGraph): 
     print("-"*50,"exclusion_criteria_node")
+    print(f"debug 0 : {state["messages"][-1]}")
     response = exclusion_criteria_chain.invoke({
-        "query":state["messages"][0]
+        "messages":state["messages"],
+        "query":state["messages"][-1]
     }) 
     return {"scope":response.content,"retry":state["retry"] + 1 }
 
@@ -72,14 +74,14 @@ def exclusion_criteria_edge(state:MessageGraph):
 def out_scope_manage_node(state:MessageGraph): 
     print("-"*50,"out_scope_manage_node")
     response = out_scope_manage_chain.invoke({
-        "query":state["messages"][0]
+        "messages":state["messages"]
     })
     return {"messages":response.content}
 
 def traduce_query_node(state:MessageGraph):
     print("-"*50,"traduce_query_node") 
     response = traduce_to_english_chain.invoke({
-        "query": state["messages"][0]
+        "messages": state["messages"]
     })
     return {
         "init_language":response[-1].init_language,
@@ -91,7 +93,7 @@ def traduce_query_node(state:MessageGraph):
 def classify_level_node(state:MessageGraph):
     print("-"*50,"classify_level_node")
     response = classify_level_chain.invoke({ 
-        "query": state["english_query"]
+        "messages": state["messages"]
     })
     return {"level":response.content}
 
@@ -106,9 +108,10 @@ def assign_llm_node(state:MessageGraph):
 def reasoning_node(state:MessageGraph):
     print("-"*50,"reasoning_node") 
     reasoning_motor = reasoning_chain(state["llm"])
+
     response = reasoning_motor.invoke({
+        "messages": state["english_messages"],
         "level": clasification_user[state["level"]],
-        "messages":state["english_messages"],
         "query": state["english_query"],
         "spanish_query":state["spanish_query"],
     })

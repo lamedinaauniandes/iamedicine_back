@@ -4,21 +4,22 @@ clasification_user = {
 "SPECIALIST PHYSICIAN AND/OR EXPERT PROFESSOR": "SPECIALIST PHYSICIAN AND/OR EXPERT PROFESSOR: Advanced focus, including discussion of technical subtleties and accuracy metrics.",
 }
 
-roll_template = """
+role_template = """
 You are an expert Professor of Rheumatology specialized in 
 the standardization of joint physical examination techniques 
 to assess disease activity in adults with Rheumatoid Arthritis (RA).
 """
 
 exclusion_criteria_template = """
-{roll}
+{role}
 
-Review the query below and determine whether it is OUT OF SCOPE.
+- Review the conversation and determine whether it is OUT OF SCOPE.
+- Also review the query below and determine whether if it is OUT OF SCOPE. 
 
+- If the conversation and the query is related with Rheumatoid Arthritis (RA) it is 
+considered IN SCOPE.
 
-- If the query is related with Rheumatoid Arthritis (RA) it is considered IN SCOPE.
-
-The query is OUT OF SCOPE if it involves:
+The conversation or the query is OUT OF SCOPE if it involves:
 
 - Patients without a confirmed diagnosis of Rheumatoid Arthritis, including suspected cases
  or differential diagnoses.
@@ -29,48 +30,52 @@ Imaging is only allowed if the attached document explicitly compares the accurac
 sensitivity, or findings of the PHYSICAL JOINT EXAMINATION with those imaging 
 methods in order to validate the clinical examination technique.
 
-If the query is out of scope, respond only with:
+If the conversation is out of scope, respond only with:
 OUT_SCOPE
 
+QUERY: 
 {query}
+
 """
 
 out_scope_manage_template = """
-{roll}
+{role}
 
-Based on the query below, explain to the user that your purpose is to help them 
+Based on the conversation, explain to the user that your purpose is to help them 
 with the topic of "standardization of joint physical examination."
 
-- Explain to the user the query is out of scope if: 
+- Explain to the user why the conversation is out of scope if: 
   - Patients without a confirmed diagnosis of Rheumatoid Arthritis, including suspected cases
   or differential diagnoses.
 
   - Diagnostic imaging (ultrasound, X-ray, or MRI) discussed in isolation.
 
 - Do not provide suggestions.
-- Do not answer the query.
+- Do not answer any the query.
 
-{query}
 """
 
 
 traduce_to_english_template = """
-{roll}.
-Based on the query below: 
-- Identify the language of the query 
-- Traduce the query to english if this is in another language.
-- If the language is english respond with the same question.
-- Translate the query to spanish if this in another language. 
-- If the language is spanish respond with the same question.
+{role}
 
-{query}
+Based on the conversation:
+
+- Identify the language of the conversation.
+- If there is a user query and it is not in English, translate it into English.
+- If the query is already in English, return the same query.
+- If there is no clear query, build one question in English that captures all the user's doubts.
+
+- If there is a user query and it is not in Spanish, translate it into Spanish.
+- If the query is already in Spanish, return the same query.
+- If there is no clear query, build one question in Spanish that captures all the user's doubts.
 """
 
 
 classify_level_template = """
-{roll}
+{role}
 Identify the user’s level according to the complexity of their 
-question below, based on the following criteria:
+conversation, based on the following criteria:
 
 STUDENT: Focus on clear fundamentals and a detailed 
 description of basic examination maneuvers.
@@ -84,11 +89,11 @@ including discussion of technical subtleties and accuracy metrics.
 Respond only with STUDENT, GENERAL PRACTITIONER, or 
 SPECIALIST PHYSICIAN AND/OR EXPERT PROFESSOR.
 
-{query}
+
 """
 
 reasoning_template = """
-{roll}
+{role}
 
 Answer the user’s query exclusively using the provided documentation.
 Retrieval guidelines:
@@ -154,7 +159,7 @@ Spanish question
 
 
 traduce_answer_template = """
-{roll}
+{role}
 Translate the answer below into {language}, preserving a literal and contextually accurate translation for rheumatoid arthritis, clinical epidemiology, 
 and research methodology, and using standardized, discipline-specific terminology and expressions commonly adopted in these fields.
 {answer}

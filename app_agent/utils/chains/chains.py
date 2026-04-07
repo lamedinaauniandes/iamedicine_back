@@ -5,7 +5,7 @@ from langchain_core.messages import BaseMessage
 from langchain_core.prompts import ChatPromptTemplate,MessagesPlaceholder
 from langchain_core.runnables import Runnable
 from app_agent.utils.chains.templates import (
-    roll_template,
+    role_template,
     exclusion_criteria_template,
     out_scope_manage_template,
     classify_level_template,
@@ -23,23 +23,34 @@ advanced_llm = ChatOpenAI(model="gpt-5.2")
 
 ########## CHAIN 0: EXCLUSION CRITERIA
 exclusion_criteria_prompt = ChatPromptTemplate.from_messages(
-    [("system",exclusion_criteria_template)],
-).partial(roll=roll_template)
+    [
+        ("system",exclusion_criteria_template),
+         MessagesPlaceholder(variable_name="messages")
+    ],
+   
+
+).partial(role=role_template)
 
 exclusion_criteria_chain =  exclusion_criteria_prompt | advanced_llm 
 ######### CHAIN 0.1 OUT SCOPE MANAGE
 
 out_scope_manage_prompt = ChatPromptTemplate.from_messages(
-    [("system",out_scope_manage_template)]
-).partial(roll=roll_template)
+    [
+        ("system",out_scope_manage_template),
+        MessagesPlaceholder(variable_name="messages")
+    ]
+).partial(role=role_template)
 
 out_scope_manage_chain = out_scope_manage_prompt | basic_llm
 
 ########## CHAIN 1: TRADUCE QUERY
 
 traduce_to_english_prompt = ChatPromptTemplate.from_messages(
-    [("system",traduce_to_english_template),]
-).partial(roll=roll_template)
+    [
+        ("system",traduce_to_english_template),
+        MessagesPlaceholder(variable_name="messages")
+    ]
+).partial(role=role_template)
 
 
 traduce_to_english_chain = traduce_to_english_prompt|advanced_llm.bind_tools(
@@ -48,8 +59,11 @@ traduce_to_english_chain = traduce_to_english_prompt|advanced_llm.bind_tools(
 
 ######### CHAIN 2: classify level
 classify_level_prompt = ChatPromptTemplate.from_messages(
-    [("system",classify_level_template),]
-).partial(roll=roll_template)
+    [
+        ("system",classify_level_template),
+        MessagesPlaceholder(variable_name="messages")
+    ]
+).partial(role=role_template)
 
 classify_level_chain = classify_level_prompt | advanced_llm
 
@@ -59,8 +73,8 @@ def reasoning_chain(llm:BaseChatModel) -> Runnable[dict,BaseMessage]:
     
     reasoning_prompt = ChatPromptTemplate.from_messages([
         ("system",reasoning_template),
-        MessagesPlaceholder(variable_name="messages"),
-    ]).partial(roll=roll_template)
+        MessagesPlaceholder(variable_name="messages")
+    ]).partial(role=role_template)
 
     reasoning_chain = reasoning_prompt | llm
     
@@ -73,7 +87,7 @@ def back_original_language_chain(llm:BaseChatModel) -> Runnable[dict,BaseMessage
 
     traduce_prompt = ChatPromptTemplate.from_messages(
         [("system",traduce_answer_template)]
-    ).partial(roll=roll_template)
+    ).partial(role=role_template)
 
     traduce_chain = traduce_prompt | llm 
 

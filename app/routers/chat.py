@@ -10,7 +10,8 @@ from sqlalchemy.orm import Session
 from app.schemas import ChatRequest,ChatResponse, User, ShowUser, UpdateUser
 
 from app_agent.agent import state_machine
-from langchain_core.messages import HumanMessage 
+from langchain_core.messages import HumanMessage
+from langgraph.checkpoint.memory import InMemorySaver 
 
 router = APIRouter(
     prefix="/chat",
@@ -23,11 +24,11 @@ agent = None
 @router.on_event("startup")
 def startup():
     global agent
-    agent = state_machine.compile()
+    checkpointer = InMemorySaver()
+    agent = state_machine.compile(checkpointer = checkpointer)
 
 @router.post("",response_model=ChatResponse)
 async def chat(req:ChatRequest,db:Session = Depends(get_db),current_user:User=Depends(get_current_user)):
-    print("chat ...")
     if agent is None: 
         raise HTTPException(status_code=400,detail="Agent not initialized")
     message_user = req.message.strip()
@@ -39,7 +40,13 @@ async def chat(req:ChatRequest,db:Session = Depends(get_db),current_user:User=De
             {
                 "messages": [HumanMessage(content=message_user)],
                 "retry":0
+            },
+            config={
+                "configurable": {
+                    "thread_id": current_user
+                }
             }
+            
         )
 
         msgs = res.get("messages",[])
