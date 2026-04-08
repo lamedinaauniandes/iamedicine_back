@@ -46,6 +46,7 @@ class ChatRequest(BaseModel):
 
 class ChatResponse(BaseModel): 
     reply: str
+    url_image:str
 
 class Token(BaseModel): 
     acces_token:str

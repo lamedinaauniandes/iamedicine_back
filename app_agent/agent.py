@@ -9,6 +9,7 @@ from app_agent.utils.nodes.nodes import (
     classify_level_node, 
     assign_llm_node,
     reasoning_node,
+    select_image_node,
     should_investigate_edge,
     traduce_original_language,
     tool_node,
@@ -23,6 +24,7 @@ state_machine.add_node(TRADUCE_QUERY_NODE,traduce_query_node)
 state_machine.add_node(CLASSIFY_LEVEL_NODE,classify_level_node)
 state_machine.add_node(ASSIGN_LLM_NODE,assign_llm_node)
 state_machine.add_node(REASONING_NODE,reasoning_node)
+state_machine.add_node(SELECT_IMAGE_NODE,select_image_node)
 state_machine.add_node(RAG_NODE,tool_node)
 state_machine.add_node(TRADUCE_ORIGINALLANGUAGE_NODE,traduce_original_language)
 
@@ -39,9 +41,10 @@ state_machine.add_edge(ASSIGN_LLM_NODE,REASONING_NODE)
 state_machine.add_conditional_edges(
     REASONING_NODE, 
     should_investigate_edge,
-    [RAG_NODE,TRADUCE_ORIGINALLANGUAGE_NODE]
+    [RAG_NODE,SELECT_IMAGE_NODE]
 )
 state_machine.add_edge(RAG_NODE,REASONING_NODE)
+state_machine.add_edge(SELECT_IMAGE_NODE,TRADUCE_ORIGINALLANGUAGE_NODE)
 state_machine.add_edge(TRADUCE_ORIGINALLANGUAGE_NODE,END)
 
 if __name__=="__main__":

@@ -11,9 +11,15 @@ from app_agent.utils.chains.templates import (
     classify_level_template,
     traduce_to_english_template,
     reasoning_template,
+    select_image_template,
     traduce_answer_template,
 )
-from app_agent.utils.schemas.schemas import Language,parser_pydantic_language 
+from app_agent.utils.schemas.schemas import (
+    Language,
+    parser_pydantic_language,
+    Image,
+    parser_pydantic_image,
+)
 
 
 load_dotenv()
@@ -79,6 +85,20 @@ def reasoning_chain(llm:BaseChatModel) -> Runnable[dict,BaseMessage]:
     reasoning_chain = reasoning_prompt | llm
     
     return reasoning_chain
+
+######### CHAIN 3.1: SELECTING IMAGE
+def select_image_chain(llm:BaseChatModel) -> Runnable[dict,BaseMessage]: 
+
+    selectimage_prompt = ChatPromptTemplate.from_messages([
+        ("system",select_image_template), 
+    ]).partial(role=role_template)
+
+    selectimage_chain = selectimage_prompt | llm.bind_tools(
+        tools=[Image],tool_choice="Image"
+    ) | parser_pydantic_image
+
+    return selectimage_chain
+
 
 
 ########## CHAIN 4: BACK TO THE ORIGINAL LANGUAGE

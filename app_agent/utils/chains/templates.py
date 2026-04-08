@@ -156,6 +156,28 @@ Spanish question
 {spanish_query}
 """
 
+# select_image_template = """
+# {role}
+# - Based on the description of each image, select the appropriate image URL that supports and enhances the answer below.
+# - If none of the descriptions supports the answer, set the image URL to: null, and set the description to: null.
+
+# image_1:
+#   - description: This image is appropriate for whatever response requires this image.
+#   - image_url: https://iamedicine-images.s3.us-east-1.amazonaws.com/imagenes_RA/imagen_1.jpg
+
+# {answer}
+# """
+
+select_image_template = """
+{role}
+- Return the image url for image 1 and its description.
+
+image 1:
+  - description: This image is appropriate for any response that requires this image.
+  - image url: https://iamedicine-images.s3.us-east-1.amazonaws.com/imagenes_RA/imagen_1.jpg
+
+{answer}
+"""
 
 
 traduce_answer_template = """

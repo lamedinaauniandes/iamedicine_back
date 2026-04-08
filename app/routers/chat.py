@@ -49,12 +49,18 @@ async def chat(req:ChatRequest,db:Session = Depends(get_db),current_user:User=De
             
         )
 
+        print("-"*50,"Agent Response")
         msgs = res.get("messages",[])
-
+    
         if not msgs:
             raise RuntimeError("Agent returned no messages")
+        
+       
         answer = getattr(msgs[-1],"content",None) or str(msgs[-1])
-        return ChatResponse(reply=answer)
+        url_image = getattr(msgs[-1],"image_url",None) or str(msgs[-1])
+
+        print("url_image: ",url_image)
+        return ChatResponse(reply=answer,url_image=url_image)
 
     except Exception as e:
         print("debug 8",f" {e}")

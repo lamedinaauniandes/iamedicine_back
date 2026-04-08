@@ -6,11 +6,12 @@ from langchain_core.language_models.chat_models import BaseChatModel
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode
 from app_agent.utils.chains.chains import (
-    reasoning_chain,
     exclusion_criteria_chain,
     out_scope_manage_chain,
     classify_level_chain,
     traduce_to_english_chain,
+    reasoning_chain,
+    select_image_chain,
     back_original_language_chain,
 )
 from app_agent.utils.chains.templates import clasification_user
@@ -24,6 +25,7 @@ from app_agent.utils.nodes.node_names import (
     ASSIGN_LLM_NODE,
     REASONING_NODE,
     RAG_NODE,
+    SELECT_IMAGE_NODE,
     TRADUCE_ORIGINALLANGUAGE_NODE,
 )
 from langgraph.graph import StateGraph,START,END
@@ -46,6 +48,8 @@ class MessageGraph(TypedDict):
     spanish_query: str
     scope: str
     retry: int = 0
+    image_url: str
+    image_description: str
 
 def exclusion_criteria_node(state:MessageGraph): 
     print("-"*50,"exclusion_criteria_node")
@@ -120,7 +124,25 @@ def reasoning_node(state:MessageGraph):
 def should_investigate_edge(state:MessageGraph) -> str: 
     if state["english_messages"][-1].tool_calls: 
         return RAG_NODE
-    return TRADUCE_ORIGINALLANGUAGE_NODE
+    return SELECT_IMAGE_NODE
+
+def select_image_node(state:MessageGraph) -> str: 
+    print("-"*50,"select_image_node")
+
+    selectimage_motor = select_image_chain(state["llm"])
+
+    response = selectimage_motor.invoke({
+        "answer":state["english_messages"][-1].content
+    })
+
+    print(response)
+    print(response[-1].image_url)
+
+    return { 
+      "image_url": response[-1].image_url,
+      "image_description": response[-1].description
+    }
+
 
 def traduce_original_language(state:MessageGraph):
     print("-"*50,"traduce_original_language") 
