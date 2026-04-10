@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 from typing import TypedDict,Annotated
 from langchain_openai import ChatOpenAI
-from langchain_core.messages import BaseMessage,ToolMessage
+from langchain_core.messages import BaseMessage,ToolMessage,HumanMessage
 from langchain_core.language_models.chat_models import BaseChatModel
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode
@@ -41,11 +41,11 @@ class MessageGraph(TypedDict):
     messages: Annotated[list[BaseMessage],add_messages]
     english_messages: Annotated[list[BaseMessage],add_messages]
     init_language:str
+    english_query: str
+    spanish_query: str
     level: str
     llm: BaseChatModel
     query: str
-    english_query: str
-    spanish_query: str
     scope: str
     retry: int = 0
     image_url: str
@@ -80,7 +80,7 @@ def out_scope_manage_node(state:MessageGraph):
     response = out_scope_manage_chain.invoke({
         "messages":state["messages"]
     })
-    return {"messages":response.content}
+    return {"messages":[response]}  
 
 def traduce_query_node(state:MessageGraph):
     print("-"*50,"traduce_query_node") 
@@ -88,8 +88,8 @@ def traduce_query_node(state:MessageGraph):
         "messages": state["messages"]
     })
     return {
+        "english_messages":HumanMessage(content=response[-1].english_query),
         "init_language":response[-1].init_language,
-        "english_messages":response[-1].english_query,
         "english_query":response[-1].english_query,
         "spanish_query":response[-1].spanish_query
         }
@@ -153,7 +153,7 @@ def traduce_original_language(state:MessageGraph):
             "answer": state["english_messages"][-1].content
         })
         return {"messages":re}    
-    return {"messages":state["english_messages"][-1]}
+    return {"messages":[state["english_messages"][-1]]}
 
 
 tool_node = ToolNode(tools,messages_key="english_messages")

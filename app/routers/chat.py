@@ -12,6 +12,7 @@ from app.schemas import ChatRequest,ChatResponse, User, ShowUser, UpdateUser
 from app_agent.agent import state_machine
 from langchain_core.messages import HumanMessage
 from langgraph.checkpoint.memory import InMemorySaver 
+import json
 
 router = APIRouter(
     prefix="/chat",
@@ -39,7 +40,11 @@ async def chat(req:ChatRequest,db:Session = Depends(get_db),current_user:User=De
             agent.invoke,
             {
                 "messages": [HumanMessage(content=message_user)],
-                "retry":0
+                "retry":0,
+                "image_url":"",
+                "english_query":"",
+                "spanish_query":"",
+                "image_description":""
             },
             config={
                 "configurable": {
@@ -50,14 +55,16 @@ async def chat(req:ChatRequest,db:Session = Depends(get_db),current_user:User=De
         )
 
         print("-"*50,"Agent Response")
+        # print(json.dumps(res, indent=4, ensure_ascii=False, default=str))
+
         msgs = res.get("messages",[])
+        url_image = res.get("image_url","")
     
         if not msgs:
             raise RuntimeError("Agent returned no messages")
         
        
         answer = getattr(msgs[-1],"content",None) or str(msgs[-1])
-        url_image = getattr(msgs[-1],"image_url",None) or str(msgs[-1])
 
         print("url_image: ",url_image)
         return ChatResponse(reply=answer,url_image=url_image)
