@@ -53,7 +53,7 @@ class MessageGraph(TypedDict):
 
 def exclusion_criteria_node(state:MessageGraph): 
     print("-"*50,"exclusion_criteria_node")
-    print(f"debug 0 : {state["messages"][-1]}")
+    # print(f"debug 0 : {state["messages"][-1]}")
     response = exclusion_criteria_chain.invoke({
         "messages":state["messages"],
         "query":state["messages"][-1]
@@ -66,7 +66,7 @@ def exclusion_criteria_edge(state:MessageGraph):
     scope = state["scope"].upper().replace(" ","")
     retry = state["retry"]
 
-    print("#"*10,f"scope: {state['scope']}")
+    # print("#"*10,f"scope: {state['scope']}")
   
     if scope == "OUT_SCOPE" and retry>RETRIES_MAX:
         return OUT_SCOPE_MANAGE_NODE
@@ -122,8 +122,12 @@ def reasoning_node(state:MessageGraph):
     return {"english_messages":[response]}
 
 def should_investigate_edge(state:MessageGraph) -> str: 
+    print("-"*50,"should investigate....")
+    # print("-"*50,state["english_messages"][-1].tool_calls)
     if state["english_messages"][-1].tool_calls: 
         return RAG_NODE
+    if state["english_messages"][-1].content == "The requested information is not found in the reference documentation.":
+        return TRADUCE_ORIGINALLANGUAGE_NODE
     return SELECT_IMAGE_NODE
 
 def select_image_node(state:MessageGraph) -> str: 
@@ -135,9 +139,6 @@ def select_image_node(state:MessageGraph) -> str:
         "answer":state["english_messages"][-1].content
     })
 
-    print(response)
-    print(response[-1].image_url)
-
     return { 
       "image_url": response[-1].image_url,
       "image_description": response[-1].description
@@ -146,6 +147,7 @@ def select_image_node(state:MessageGraph) -> str:
 
 def traduce_original_language(state:MessageGraph):
     print("-"*50,"traduce_original_language") 
+    print(state["english_messages"][-1].content)
     if state["init_language"].lower().replace(" ","") != "english":
         traduce_motor = back_original_language_chain(state["llm"])
         re = traduce_motor.invoke({

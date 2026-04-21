@@ -41,7 +41,7 @@ state_machine.add_edge(ASSIGN_LLM_NODE,REASONING_NODE)
 state_machine.add_conditional_edges(
     REASONING_NODE, 
     should_investigate_edge,
-    [RAG_NODE,SELECT_IMAGE_NODE]
+    [RAG_NODE,SELECT_IMAGE_NODE,TRADUCE_ORIGINALLANGUAGE_NODE]
 )
 state_machine.add_edge(RAG_NODE,REASONING_NODE)
 state_machine.add_edge(SELECT_IMAGE_NODE,TRADUCE_ORIGINALLANGUAGE_NODE)

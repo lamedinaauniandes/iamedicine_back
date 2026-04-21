@@ -21,7 +21,6 @@ router = APIRouter(
 
 agent = None
 
-
 @router.on_event("startup")
 def startup():
     global agent
