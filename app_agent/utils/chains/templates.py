@@ -562,7 +562,6 @@ Answer:
 {answer}
 """
 
-
 traduce_answer_template = """
 {role}
 
